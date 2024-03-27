@@ -1,0 +1,91 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="{% static "main.css" %}">
+    <title>Django App</title>
+  </head>
+  <body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 offset-md-4 mt-4">
+                <h1 class="display-6 fw-bold text-center">Tareas de Mantenimiento</h1>
+                <form action="{% url "create_task" %}" method="POST" class="card card-body bg-secondary needs-validation" novalidate>
+                {% csrf_token %}
+                <div class="has-validation position-relative">
+                    <label for="title">Nombre del Equipo:</label>
+                    <input type="text" name="title" placeholder="Ingresa un equipo" class="form-control" required/>
+                    <div class="valid-tooltip">Excelente</div>
+                    <div class="invalid-tooltip">Por favor, ingresa el nombre del equipo</div>
+                </div>
+
+                <div class="has-validation position-relative mt-5">
+                    <label for="description">Descripción de la Tarea:</label>
+                    <textarea name="description" rows="3" placeholder="Ingresa la descripción de la tarea" class="form-control" required ></textarea>
+                    <div class="valid-tooltip">Excelente</div>
+                    <div class="invalid-tooltip">Por favor, ingresa el nombre de la tarea</div>
+                </div>
+
+                <div class="has-validation position-relative mt-5">
+                    <label for="responsible">Nombre del Responsable:</label>
+                    <input type="text" name="responsible" placeholder="Ingresa al responsable" class="form-control" required />
+                    <div class="valid-tooltip">Excelente</div>
+                    <div class="invalid-tooltip">Por favor, ingresa el nombre del responsable</div>
+                </div>
+
+                <button class="btn btn-success mt-5">Guardar Tarea de Mantenimiento</button>
+                </form>
+
+                {% for task in tasks %}
+                <div class="card card-body text-black mt-2 d-flex flex-row justify-content-between">
+                    <div>
+                        <h4>{{task.title}}</h4>
+                        <p>{{task.description}}</p>
+                        <h6>{{task.responsible}}</h6>
+                        <h6>{{task.status}}</h6>
+                    </div>
+                    <div>
+                    <form action="{% url "delete_task" task.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-danger mb-2">Eliminar</button>
+                    </form>
+                    <form action="{% url "aprove_task" task.id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-warning">Aprobar</button>
+                    </form>
+                    </div>
+                </div>
+                {% empty %}
+                <h4 class="display-6 fw-bold text-center">No hay Tareas de Mantenimiento</h4>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="text-center mt-2 mb-2">
+            <a class="btn btn-info" href="{% url "summary_task" %}">Resumen de Mantenimientos</a>
+        </div>
+    </div>
+  </body>
+  <script>
+    (() => {
+        'use strict'
+      
+        // Fetch all the forms we want to apply custom Bootstrap validation styles to
+        const forms = document.querySelectorAll('.needs-validation')
+      
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+          form.addEventListener('submit', event => {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+      
+            form.classList.add('was-validated')
+          }, false)
+        })
+      })()
+  </script>
+</html>
